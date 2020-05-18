@@ -9,15 +9,28 @@ const app = express();
 app.set('view engine', 'pug');
 app.set('views', './views');
 
+var lists = [
+      {id : 1, name: 'Đi làm'},
+      {id : 2, name: 'Nấu ăn'},
+      {id : 3, name: 'Tập thể dục'},
+      {id : 4, name: 'Học trên CodersX'}
+    ];
+
 // https://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request, response) => {
   response.send('Hello CodersX');
 });
 
 app.get('/todos', (request, response) => {
-  response.render('index');
-});
-
+  var q = request.query.q;
+  var matchedList = lists.filter(function(list) {
+    return list.name.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+  });
+  
+  response.render('index', {
+    listToDo: matchedList
+  });
+  });
 
 // listen for requests :)
 app.listen(process.env.PORT, () => {
