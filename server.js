@@ -6,31 +6,14 @@
 const express = require('express');
 const app = express();
 
-app.set('view engine', 'pug');
-app.set('views', './views');
-
-var lists = [
-      {id : 1, name: 'Đi làm'},
-      {id : 2, name: 'Nấu ăn'},
-      {id : 3, name: 'Tập thể dục'},
-      {id : 4, name: 'Học trên CodersX'}
-    ];
-
 // https://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request, response) => {
-  response.send('Hello CodersX');
+  response.send('I love CodersX');
 });
 
 app.get('/todos', (request, response) => {
-  var q = request.query.q;
-  var matchedList = lists.filter(function(list) {
-    return list.name.toLowerCase().indexOf(q.toLowerCase()) !== -1;
-  });
-  
-  response.render('index', {
-    listToDo: matchedList
-  });
-  });
+  response.send('<ul><li>Đi chợ</li><li>Nấu cơm</li><li>Rửa bát</li><li>Học code tại CodersX</li></ul>');
+});
 
 // listen for requests :)
 app.listen(process.env.PORT, () => {
