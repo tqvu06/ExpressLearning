@@ -11,11 +11,11 @@ app.set('views', './views');
 
 // https://expressjs.com/en/starter/basic-routing.html
 app.get('/', (request, response) => {
-  response.send('Hello CodersX');
+  response.render('index');
 });
 
 app.get('/todos', (request, response) => {
-  response.render('index');
+  response.render('todos/index');
 });
 
 
