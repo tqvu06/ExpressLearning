@@ -4,58 +4,84 @@
 // we've started you off with Express (https://expressjs.com/)
 // but feel free to use whatever libraries or frameworks you'd like through `package.json`.
 const express = require("express");
-const bodyParser = require("body-parser");
 const app = express();
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+const bodyParser = require("body-parser");
+const low = require("lowdb");
+const shortid = require('shortid')
+const _ = require('lodash');
 
-const adapter = new FileSync('db.json');
+const FileSync = require("lowdb/adapters/FileSync");
+const adapter = new FileSync("db.json");
 const db = low(adapter);
 
 
+
+db.defaults({ todos: [] });
+
+const todoList = db.get("todos").value();
+
+app.use(bodyParser.json()); // for parsing application/json
+app.use(bodyParser.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
+
+// https://expressjs.com/en/starter/static-files.html
+app.use(express.static("public"));
+
 app.set("view engine", "pug");
-app.set("views", "./views");
 
-app.use(express.json()); // for parsing application/json
-app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
-
-
-// https://expressjs.com/en/starter/basic-routing.html
-app.get("/", (request, response) => {
-  response.render("index");
+app.get("/", (req, res) => {
+  res.render("index");
 });
 
-app.get('/todos', function(request, response) {
-	response.render('todos/index', {
-		todos: db.get('todos').value()
-	});
-});
-
-app.get('/todos/search', function(req, response) {
-	var q = req.query.q;
-	var matchedTodos = db.get('todos').value().filter(function(user) {
-		return user.name.toLowerCase().indexOf(q.toLowerCase()) !== -1;
-	});
-	response.render('users/index', {
-		todos: matchedTodos
-	});
+app.get("/todos", (req, res) => {
+  res.render("todos", {
+    todoList: todoList
   });
-
-
-app.get("/todos", (request, response) => {
-  response.render('todos/index');
 });
 
-app.get("/todos/create", function(request, response) {
-  response.render("todos/create");
+app.get("/todos/search", (req, res) => {
+  let q = req.query.q;
+  let matchedQuery = todoList.filter((item) => {
+    return item.text.toLowerCase().indexOf(q.toLowerCase()) !== -1;
+  });
+  
+  res.render("todos", {
+    todoList: matchedQuery
+  });
 });
 
-app.post("/todos/create", function(request, response) {
-  db.get('todos').push(request.body).write();
-  response.redirect("/todos");
+app.get("/create", (req, res) => {
+  res.render("create");
+});
+
+app.post("/create", (req, res) => {
+  console.log(req.body);
+  db.get("todos")
+    .push({ 
+      text: req.body.text,
+      id: shortid.generate()
+    })
+    .write();
+  
+  res.redirect("/todos");
+});
+
+app.get("/todos/:id/delete", (req, res) => {
+ 
+  let item = db.get("todos")
+    .find({ id: req.params.id })
+    .value();
+  let indexItem = db.get("todos")
+    .value()
+    .indexOf(item);
+  
+  db.get("todos")
+    .value()
+    .splice(indexItem, 1);
+  
+  res.redirect('/todos');
 });
 
 // listen for requests :)
-app.listen(process.env.PORT, () => {
-  console.log("Server listening on port " + process.env.PORT);
+const listener = app.listen(process.env.PORT, () => {
+  console.log("Your app is listening on port " + listener.address().port);
 });

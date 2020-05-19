@@ -1,0 +1,12 @@
+extend ./layout/common
+block content
+
+  form(action="/todos/search", method="get")
+    input(name="q" id="search-box")
+    button(for="search-box") Search
+  ul
+    each todo in todoList
+      li
+        span= todo.text
+        a(class="ml-3 btn btn-primary p-1" href=`/todos/${todo.id}/delete`) Delete
+  a(class="btn btn-primary", href="/create") Create

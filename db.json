@@ -1,16 +1,12 @@
 {
   "todos": [
     {
-      "id": 1,
-      "text": "blah"
+      "text": "fff",
+      "id": "CzOYaEaHI"
     },
     {
-      "todo": "Sleep"
+      "text": "aa",
+      "id": "qvSo2tP66"
     }
-  ],
-  "posts": [],
-  "user": {},
-  "count": 0,
-  "users": [],
-  "lists": []
+  ]
 }
